@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HandMeet - Inscription</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="./script.js"></script>
+  </head>
+  <body>
+    <div class="app-container auth-screen">
+      <header>
+        <a href="index.html" class="back-btn">←</a>
+        <div class="logo">HandMeet</div>
+      </header>
+
+      <div class="auth-header">
+        <h2>Créer un compte</h2>
+        <p>Rejoins la communauté HandMeet.</p>
+      </div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" id="signup-prenom" placeholder="Ex: Elian" required />
+        </div>
+        
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="signup-nom" placeholder="Ex: Simonet" required />
+        </div>
+
+        <div class="form-group">
+          <label>Âge</label>
+          <input type="number" id="signup-age" placeholder="Ex: 25" required />
+        </div>
+
+        <div class="form-group">
+          <label>Adresse email</label>
+          <input type="email" id="signup-email" placeholder="exemple@gmail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label>Type de handicap (ou allié)</label>
+          <select id="signup-handicap">
+            <option value="Moteur">Moteur</option>
+            <option value="Visuel">Visuel</option>
+            <option value="Auditif">Auditif</option>
+            <option value="Invisible">Invisible</option>
+            <option value="Allié">Allié (sans handicap)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-submit">S'inscrire</button>
+      </form>
+
+      <div class="auth-footer">
+        Déjà inscrit ? <a href="login.html">Connecte-toi</a>
+      </div>
+    </div>
+  </body>
+</html>

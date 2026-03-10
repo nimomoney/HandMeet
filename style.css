@@ -1,0 +1,225 @@
+/* --- CONFIGURATION GLOBALE --- */
+:root {
+    --primary-color: #7c4dff;    /* Violet moderne */
+    --secondary-color: #f3f0ff;  /* Fond très clair */
+    --accent-color: #ff4081;     /* Rose pour les likes/actions */
+    --text-dark: #2d3436;        /* Texte principal */
+    --text-light: #636e72;       /* Texte secondaire */
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --border-radius: 16px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+a { text-decoration: none; }
+
+/* --- CONTENEUR MOBILE (DA de type App) --- */
+.app-container, .welcome-content {
+    width: 100%;
+    max-width: 400px; /* Format téléphone */
+    height: 90vh;
+    background: var(--white);
+    border-radius: 30px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* --- HEADERS & LOGO --- */
+header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+.logo, .logo-large {
+    font-weight: 800;
+    color: var(--primary-color);
+    letter-spacing: -1px;
+}
+
+.logo { font-size: 1.5rem; flex-grow: 1; text-align: center; }
+.logo-large { font-size: 3rem; text-align: center; margin-bottom: 10px; }
+
+.back-btn {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    padding: 10px;
+    position: absolute;
+    left: 20px;
+}
+
+/* --- PAGE D'ACCUEIL (INDEX) --- */
+.welcome-content {
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f3f0ff 100%);
+}
+
+.tagline {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 40px;
+}
+
+.features {
+    margin-bottom: 50px;
+}
+
+.feature-item {
+    background: var(--white);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-weight: 500;
+}
+
+/* --- BOUTONS --- */
+.auth-buttons, .form-group { width: 100%; }
+
+.btn-start, .btn-submit {
+    display: block;
+    background: var(--primary-color);
+    color: var(--white);
+    padding: 16px;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-secondary {
+    display: block;
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-start:active, .btn-submit:active { transform: scale(0.98); }
+
+/* --- FORMULAIRES (LOGIN/SIGNUP) --- */
+.auth-header { margin-bottom: 30px; }
+.auth-header h2 { font-size: 1.8rem; margin-bottom: 5px; }
+.auth-header p { color: var(--text-light); }
+
+.form-group { margin-bottom: 20px; text-align: left; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+
+input, select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus { border-color: var(--primary-color); }
+
+.auth-footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.9rem;
+}
+
+.auth-footer a { color: var(--primary-color); font-weight: bold; }
+
+/* --- PAGE FINDUSER (SYSTÈME DE CARTES) --- */
+#tinder-card {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.card-info {
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: var(--white);
+    padding: 20px;
+}
+
+.name-age { font-size: 1.5rem; font-weight: bold; }
+
+.badges .badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    backdrop-filter: blur(5px);
+}
+
+/* --- ACTIONS (FOOTER FINDUSER) --- */
+.actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.btn:active { transform: scale(0.85); }
+
+.btn.dislike { background: var(--white); color: #ff5252; }
+.btn.like { background: var(--primary-color); color: var(--white); }
+.btn.info { background: var(--white); color: var(--text-light); width: 45px; height: 45px; font-size: 1.2rem; }
+
+
