@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HandMeet - Inscription</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="./script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#7c4dff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn-icons-png.flaticon.com/512/2585/2585175.png"
+    />
+  </head>
+  <body>
+    <div class="app-container auth-screen">
+      <header>
+        <a href="index.html" class="back-btn">←</a>
+        <div class="logo">HandMeet</div>
+      </header>
+
+      <div class="auth-header">
+        <h2>Créer un compte</h2>
+        <p>Rejoins la communauté HandMeet.</p>
+      </div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input
+            type="text"
+            id="signup-prenom"
+            placeholder="Ex: Elian"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Nom</label>
+          <input
+            type="text"
+            id="signup-nom"
+            placeholder="Ex: Simonet"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Âge</label>
+          <input type="number" id="signup-age" placeholder="Ex: 25" required />
+        </div>
+
+        <div class="form-group">
+          <label>Adresse email</label>
+          <input
+            type="email"
+            id="signup-email"
+            placeholder="exemple@gmail.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Type de handicap</label>
+          <select id="signup-handicap">
+            <option value="Moteur">Moteur</option>
+            <option value="Visuel">Visuel</option>
+            <option value="Auditif">Auditif</option>
+            <option value="Invisible">Invisible</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Type de relation désirée</label>
+          <select id="signup-relation">
+            <option value="Amical">Amical</option>
+            <option value="Amoureuse">Amoureuse</option>
+            <option value="Sexuelle">Sexuelle</option>
+            <option value="Très sérieuse">Très sérieuse</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Photo de profil (Background)</label>
+          <input type="file" id="signup-photo" accept="image/*" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            id="signup-password"
+            placeholder="Welcome*2026!@45"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Confirmation Password</label>
+          <input type="password" id="signup-password-confirmation" required />
+        </div>
+        <button type="submit" class="btn-submit">S'inscrire</button>
+      </form>
+
+      <div class="auth-footer">
+        Déjà inscrit ? <a href="login.html">Connecte-toi</a>
+      </div>
+    </div>
+  </body>
+</html>

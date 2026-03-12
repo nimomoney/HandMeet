@@ -1,0 +1,38 @@
+{
+  "short_name": "HandMeet",
+  "name": "HandMeet - Rencontres Accessibles",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2585/2585175.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2585/2585175.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2585/2585175.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Aperçu HandMeet Ordinateur"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2585/2585175.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Aperçu HandMeet Mobile"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "theme_color": "#7c4dff",
+  "background_color": "#ffffff"
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HandMeet - Connexion</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style-alert.css" />
+    <script type="module" src="./login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#7c4dff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn-icons-png.flaticon.com/512/2585/2585175.png"
+    />
+  </head>
+  <body>
+    <div class="app-container auth-screen">
+      <header>
+        <a href="index.html" class="back-btn">←</a>
+        <div class="logo">HandMeet</div>
+      </header>
+
+      <div class="auth-header">
+        <h2>Bon retour !</h2>
+        <p>Heureux de te revoir.</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="ton@email.com"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input
+            type="password"
+            id="login-password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-submit">Se connecter</button>
+      </form>
+
+      <div class="auth-footer">
+        Pas encore de compte ? <a href="signup.html">Inscris-toi</a>
+      </div>
+    </div>
+  </body>
+</html>

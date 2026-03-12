@@ -24,24 +24,34 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    width: 100%;
     overflow-x: hidden;
 }
 
 a { text-decoration: none; }
 
-/* --- CONTENEUR MOBILE (DA de type App) --- */
+/* --- CONTENEUR MOBILE ADAPTATIF --- */
 .app-container, .welcome-content {
     width: 100%;
-    max-width: 400px; /* Format téléphone */
-    height: 90vh;
+    max-width: 450px; /* Légèrement plus large pour le confort PC */
+    height: 100vh;    /* Pleine hauteur par défaut sur mobile */
     background: var(--white);
-    border-radius: 30px;
-    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
     padding: 20px;
+    overflow-y: auto; /* Permet le défilement si le contenu est long */
+    overflow-x: hidden;
+}
+
+/* --- AJUSTEMENTS POUR ORDINATEURS/TABLETTES --- */
+@media (min-width: 480px) {
+    .app-container, .welcome-content {
+        height: 90vh;
+        max-height: 850px;
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+    }
 }
 
 /* --- HEADERS & LOGO --- */
@@ -50,6 +60,8 @@ header {
     align-items: center;
     padding: 10px 0;
     margin-bottom: 20px;
+    width: 100%;
+    min-height: 50px;
 }
 
 .logo, .logo-large {
@@ -58,15 +70,25 @@ header {
     letter-spacing: -1px;
 }
 
-.logo { font-size: 1.5rem; flex-grow: 1; text-align: center; }
-.logo-large { font-size: 3rem; text-align: center; margin-bottom: 10px; }
+.logo { 
+    font-size: 1.5rem; 
+    flex-grow: 1; 
+    text-align: center; 
+}
+
+.logo-large { 
+    font-size: clamp(2.5rem, 8vw, 3.5rem); /* Taille s'adapte à l'écran */
+    text-align: center; 
+    margin-bottom: 10px; 
+}
 
 .back-btn {
     font-size: 1.2rem;
     color: var(--text-dark);
     padding: 10px;
     position: absolute;
-    left: 20px;
+    left: 15px;
+    z-index: 10;
 }
 
 /* --- PAGE D'ACCUEIL (INDEX) --- */
@@ -80,10 +102,12 @@ header {
     font-size: 1.1rem;
     color: var(--text-light);
     margin-bottom: 40px;
+    padding: 0 10px;
 }
 
 .features {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
+    width: 100%;
 }
 
 .feature-item {
@@ -100,6 +124,7 @@ header {
 
 .btn-start, .btn-submit {
     display: block;
+    width: 100%;
     background: var(--primary-color);
     color: var(--white);
     padding: 16px;
@@ -109,20 +134,26 @@ header {
     margin-bottom: 15px;
     border: none;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
+    font-size: 1rem;
 }
 
 .btn-secondary {
     display: block;
+    width: 100%;
     color: var(--primary-color);
     font-weight: 600;
     text-align: center;
+    padding: 10px;
 }
 
 .btn-start:active, .btn-submit:active { transform: scale(0.98); }
 
 /* --- FORMULAIRES (LOGIN/SIGNUP) --- */
-.auth-header { margin-bottom: 30px; }
+.auth-header { 
+    margin-bottom: 30px; 
+    width: 100%;
+}
 .auth-header h2 { font-size: 1.8rem; margin-bottom: 5px; }
 .auth-header p { color: var(--text-light); }
 
@@ -137,15 +168,17 @@ input, select {
     font-size: 1rem;
     outline: none;
     transition: border-color 0.3s;
+    background-color: var(--white);
 }
 
 input:focus, select:focus { border-color: var(--primary-color); }
 
 .auth-footer {
-    margin-top: auto;
+    margin-top: auto; /* Pousse le footer vers le bas */
     text-align: center;
     padding: 20px 0;
     font-size: 0.9rem;
+    width: 100%;
 }
 
 .auth-footer a { color: var(--primary-color); font-weight: bold; }
@@ -156,14 +189,18 @@ input:focus, select:focus { border-color: var(--primary-color); }
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    padding: 10px 0;
 }
 
 .card {
     width: 100%;
     height: 100%;
+    min-height: 350px;
     border-radius: 20px;
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 .card-image {
@@ -177,7 +214,7 @@ input:focus, select:focus { border-color: var(--primary-color); }
 }
 
 .card-info {
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
     color: var(--white);
     padding: 20px;
 }
@@ -186,11 +223,12 @@ input:focus, select:focus { border-color: var(--primary-color); }
 
 .badges .badge {
     display: inline-block;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
     margin-top: 10px;
+    margin-right: 5px;
     backdrop-filter: blur(5px);
 }
 
@@ -199,7 +237,8 @@ input:focus, select:focus { border-color: var(--primary-color); }
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 20px 0;
+    padding: 15px 0;
+    width: 100%;
 }
 
 .btn {
@@ -214,12 +253,28 @@ input:focus, select:focus { border-color: var(--primary-color); }
     cursor: pointer;
     box-shadow: var(--shadow);
     transition: transform 0.2s;
+    background: var(--white);
 }
 
 .btn:active { transform: scale(0.85); }
 
-.btn.dislike { background: var(--white); color: #ff5252; }
+.btn.dislike { color: #ff5252; }
 .btn.like { background: var(--primary-color); color: var(--white); }
-.btn.info { background: var(--white); color: var(--text-light); width: 45px; height: 45px; font-size: 1.2rem; }
+.btn.info { width: 45px; height: 45px; font-size: 1.2rem; color: var(--text-light); }
+.card-image {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end; /* Pour garder les infos en bas */
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #f0f0f0; /* Couleur d'attente */
+}
 
-
+.card-info {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+}

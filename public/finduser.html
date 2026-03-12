@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>HandMeet - Trouver des profils</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#7c4dff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn-icons-png.flaticon.com/512/2585/2585175.png"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header>
+        <a href="index.html" class="back-btn"
+          ><i class="fa-solid fa-chevron-left"></i
+        ></a>
+        <div class="logo">HandMeet</div>
+      </header>
+
+      <main id="tinder-card">
+        <div class="card">
+          <div
+            id="card-bg"
+            class="card-image"
+            style="
+              background-image: url('https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500');
+            "
+          >
+            <div class="card-info">
+              <div class="name-age">
+                <span id="user-name">Chargement...</span>,
+                <span id="user-age">--</span>
+              </div>
+              <div class="badges" id="user-badges"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="actions">
+        <button class="btn dislike" onclick="chargerSuivant()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="btn info">
+          <i class="fa-solid fa-circle-info"></i>
+        </button>
+        <button class="btn like" onclick="chargerSuivant()">
+          <i class="fa-solid fa-heart"></i>
+        </button>
+      </footer>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "spotify-exporter-ef98d"
+  },
+  "targets": {
+    "spotify-exporter-ef98d": {
+      "hosting": {
+        "handmeet-site": [
+          "handmeet-app"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

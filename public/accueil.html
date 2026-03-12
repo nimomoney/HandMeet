@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Profil</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#7c4dff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn-icons-png.flaticon.com/512/2585/2585175.png"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header>
+        <div class="logo">MonProfil</div>
+      </header>
+
+      <main id="tinder-card">
+        <div class="card">
+          <div class="card-image" id="photo-profil-background">
+            <div class="card-info">
+              <div class="name-age">
+                <span id="affichage-prenom">...</span>,
+                <span id="affichage-age">--</span>
+              </div>
+              <div class="badges">
+                <span class="badge" id="affichage-email">...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer class="auth-footer">
+        <p>
+          Heureux de vous revoir,
+          <span id="affichage-nom" style="font-weight: bold">...</span>
+        </p>
+        <button
+          id="btn-deconnexion"
+          class="btn-secondary"
+          style="
+            border: none;
+            background: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+          "
+        >
+          Se déconnecter
+        </button>
+      </footer>
+    </div>
+
+    <script type="module" src="accueil.js"></script>
+  </body>
+</html>
