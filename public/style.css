@@ -297,7 +297,6 @@ input:focus, select:focus { border-color: var(--primary-color); }
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid #f0f0f0;
-    /* On s'assure que les coins arrondis du bas sont respectés */
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;
 }
