@@ -1,26 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon Profil</title>
+    <title>HandMeet - Mon Profil</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#7c4dff" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
-    <link
-      rel="apple-touch-icon"
-      href="https://cdn-icons-png.flaticon.com/512/2585/2585175.png"
-    />
   </head>
   <body>
     <div class="app-container">
       <header>
-        <div class="logo">MonProfil</div>
+        <div class="logo">Mon Profil</div>
       </header>
 
       <main id="tinder-card">
@@ -38,7 +33,8 @@
           </div>
         </div>
       </main>
-      <footer class="auth-footer">
+
+      <footer class="auth-footer" style="margin-top: 20px">
         <p>
           Heureux de vous revoir,
           <span id="affichage-nom" style="font-weight: bold">...</span>
@@ -51,14 +47,33 @@
             background: none;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 10px;
           "
         >
           Se déconnecter
         </button>
       </footer>
-    </div>
 
+      <nav class="bottom-nav">
+        <a href="accueil.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </a>
+        <a href="finduser.html" class="nav-item">
+            <i class="fas fa-search"></i>
+            <span>Explorer</span>
+        </a>
+        <a href="chats.html" class="nav-item">
+            <i class="fas fa-comment-dots"></i>
+            <span class="nav-badge">3</span>
+            <span>Messages</span>
+        </a>
+        <a href="account.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profil</span>
+        </a>
+      </nav>
+    </div>
     <script type="module" src="accueil.js"></script>
   </body>
 </html>
