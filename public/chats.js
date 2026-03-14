@@ -20,7 +20,6 @@ let unsubscribeMessages = null;
 let lastVisibleDoc = null; // Le document curseur pour la pagination
 let allMessages = [];      // Stockage local de tous les messages chargés
 let isLoadingHistory = false;
-
 // --- 2. GESTION DE LA LISTE DES DISCUSSIONS ---
 auth.onAuthStateChanged((user) => {
   if (user) {
@@ -28,7 +27,7 @@ auth.onAuthStateChanged((user) => {
     const q = query(
       colRef,
       where("participants", "array-contains", user.uid),
-      orderBy("updatedAt", "desc")
+      orderBy("lastUpdate", "desc") // Changé updatedAt par lastUpdate
     );
 
     onSnapshot(q, (snapshot) => {
@@ -38,21 +37,29 @@ auth.onAuthStateChanged((user) => {
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const convId = docSnap.id;
+        
+        // On trouve l'ID de l'autre personne
         const otherId = data.participants.find((id) => id !== user.uid);
-        const info = data.userInfo[otherId];
+        
+        // On cherche dans l'objet 'users' (le nom de ton champ en base)
+        const info = data.users ? data.users[otherId] : null;
 
         if (info) {
           listContainer.innerHTML += `
             <div class="chat-item" onclick="openChat('${convId}', '${info.prenom}')">
-                <img src="${info.photo || "default-avatar.png"}" class="chat-avatar" onerror="this.src='default-avatar.png'">
+                <img src="${info.photo || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + info.prenom}" 
+                     class="chat-avatar" 
+                     onerror="this.src='default-avatar.png'">
                 <div class="chat-info">
                     <span class="chat-name">${info.prenom}</span>
-                    <span class="msg-text">${data.lastMessage || "Nouvelle conversation"}</span>
+                    <span class="msg-text">${data.lastMessage || "Nouveau match ! Dites bonjour 👋"}</span>
                 </div>
             </div>`;
         }
       });
-    }, (error) => console.error("Erreur Firestore :", error));
+    }, (error) => {
+      console.error("Erreur Firestore :", error);
+    });
   } else {
     window.location.href = "login.html";
   }

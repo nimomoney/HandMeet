@@ -1,11 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>HandMeet - Trouver des profils</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script type="module" src="./finduser.js"></script>
   </head>
   <body>
     <div class="app-container">
@@ -15,7 +22,13 @@
 
       <main id="tinder-card">
         <div class="card">
-          <div id="card-bg" class="card-image" style="background-image: url('https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500');">
+          <div
+            id="card-bg"
+            class="card-image"
+            style="
+              background-image: url(&quot;https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500&quot;);
+            "
+          >
             <div class="card-info">
               <div class="name-age">
                 <span id="user-name">Chargement...</span>,
@@ -28,13 +41,13 @@
       </main>
 
       <div class="actions">
-        <button class="btn dislike" onclick="chargerSuivant()">
+        <button class="btn dislike" onclick="dislikeUser()">
           <i class="fa-solid fa-xmark"></i>
         </button>
         <button class="btn info">
           <i class="fa-solid fa-circle-info"></i>
         </button>
-        <button class="btn like" onclick="chargerSuivant()">
+        <button class="btn like" onclick="likeUser()">
           <i class="fa-solid fa-heart"></i>
         </button>
       </div>
@@ -59,6 +72,5 @@
         </a>
       </nav>
     </div>
-    <script type="module" src="accueil.js"></script>
   </body>
 </html>

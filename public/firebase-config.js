@@ -1,5 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { 
+    initializeFirestore, 
+    persistentLocalCache, 
+    persistentMultipleTabManager 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -12,18 +16,18 @@ const firebaseConfig = {
     appId: "1:1068097436288:web:84610c67553d143864c465"
 };
 
+// Initialisation de l'App
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// --- NOUVELLE MÉTHODE DE PERSISTENCE (Firestore 10.8+) ---
+// Remplace getFirestore + enableIndexedDbPersistence
+const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+    })
+});
+
 const auth = getAuth(app);
 const storage = getStorage(app);
-
-// --- ACTIVATION DU MODE HORS-LIGNE (Persistence) ---
-enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code == 'failed-precondition') {
-        console.warn("La persistance a échoué : plusieurs onglets ouverts.");
-    } else if (err.code == 'unimplemented') {
-        console.warn("Le navigateur ne supporte pas la persistance.");
-    }
-});
 
 export { db, auth, storage, app };
