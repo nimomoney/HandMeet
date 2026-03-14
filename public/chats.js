@@ -17,61 +17,73 @@ import { db, auth } from "./firebase-config.js";
 // --- 1. DÉCLARATIONS GLOBALES ---
 let activeConversationId = null;
 let unsubscribeMessages = null;
-let lastVisibleDoc = null; // Le document curseur pour la pagination
-let allMessages = [];      // Stockage local de tous les messages chargés
+let lastVisibleDoc = null;
+let allMessages = [];
 let isLoadingHistory = false;
+
 // --- 2. GESTION DE LA LISTE DES DISCUSSIONS ---
 auth.onAuthStateChanged((user) => {
   if (user) {
     const colRef = collection(db, "conversations");
+    // On trie par lastUpdate pour avoir les derniers messages en haut
     const q = query(
       colRef,
       where("participants", "array-contains", user.uid),
-      orderBy("lastUpdate", "desc") // Changé updatedAt par lastUpdate
+      orderBy("lastUpdate", "desc"),
     );
 
-    onSnapshot(q, (snapshot) => {
-      const listContainer = document.getElementById("conversations-list");
-      listContainer.innerHTML = "";
+    onSnapshot(
+      q,
+      (snapshot) => {
+        const listContainer = document.getElementById("conversations-list");
+        listContainer.innerHTML = "";
 
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const convId = docSnap.id;
-        
-        // On trouve l'ID de l'autre personne
-        const otherId = data.participants.find((id) => id !== user.uid);
-        
-        // On cherche dans l'objet 'users' (le nom de ton champ en base)
-        const info = data.users ? data.users[otherId] : null;
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const convId = docSnap.id;
 
-        if (info) {
-          listContainer.innerHTML += `
-            <div class="chat-item" onclick="openChat('${convId}', '${info.prenom}')">
-                <img src="${info.photo || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + info.prenom}" 
-                     class="chat-avatar" 
-                     onerror="this.src='default-avatar.png'">
+          // Trouver l'ID de l'autre utilisateur
+          const otherId = data.participants.find((id) => id !== user.uid);
+
+          // Utilisation du champ 'users' comme dans ton Firestore
+          const info = data.users ? data.users[otherId] : null;
+
+          if (info) {
+            const photoUrl =
+              info.photo ||
+              `https://api.dicebear.com/7.x/avataaars/svg?seed=${info.prenom}`;
+
+            listContainer.innerHTML += `
+            <div class="chat-item" onclick="openChat('${convId}', '${info.prenom}', '${photoUrl}')">
+                <img src="${photoUrl}" class="chat-avatar" onerror="this.src='default-avatar.png'">
                 <div class="chat-info">
                     <span class="chat-name">${info.prenom}</span>
                     <span class="msg-text">${data.lastMessage || "Nouveau match ! Dites bonjour 👋"}</span>
                 </div>
             </div>`;
-        }
-      });
-    }, (error) => {
-      console.error("Erreur Firestore :", error);
-    });
+          }
+        });
+      },
+      (error) => console.error("Erreur Firestore Liste:", error),
+    );
   } else {
     window.location.href = "login.html";
   }
 });
 
-// --- 3. OUVRIR UNE CONVERSATION (OPTIMISÉE CACHE-FIRST) ---
-window.openChat = async function (convId, name) {
+// --- 3. OUVRIR UNE CONVERSATION ---
+window.openChat = async function (convId, name, photoUrl) {
   activeConversationId = convId;
   allMessages = [];
-  lastVisibleDoc = null; 
-  
+  lastVisibleDoc = null;
+
+  // MISE À JOUR DE L'ENTÊTE (NOM + PHOTO)
   document.getElementById("active-chat-name").innerText = name;
+  const headerAvatar = document.getElementById("active-chat-avatar");
+  if (headerAvatar) {
+    headerAvatar.src = photoUrl;
+  }
+
   document.getElementById("chat-window").classList.remove("hidden");
   document.getElementById("messages-container").innerHTML = "";
   document.getElementById("msg-input").focus();
@@ -81,13 +93,12 @@ window.openChat = async function (convId, name) {
   const msgColRef = collection(db, "conversations", convId, "messages");
   const q = query(msgColRef, orderBy("createdAt", "desc"), limit(25));
 
-  // --- ÉTAPE A : TENTATIVE DE CHARGEMENT INITIAL VIA CACHE (0 LECTURE) ---
+  // --- CHARGEMENT CACHE ---
   try {
     const cacheSnap = await getDocs(query(q, { source: "cache" }));
     if (!cacheSnap.empty) {
-      console.log("Démarrage du chat via CACHE local (Gratuit)");
       const cacheMessages = [];
-      cacheSnap.forEach(docSnap => {
+      cacheSnap.forEach((docSnap) => {
         cacheMessages.push({ id: docSnap.id, ...docSnap.data() });
       });
       mergeMessages(cacheMessages);
@@ -95,64 +106,47 @@ window.openChat = async function (convId, name) {
       lastVisibleDoc = cacheSnap.docs[cacheSnap.docs.length - 1];
     }
   } catch (e) {
-    console.log("Le cache est vide, le Snapshot chargera les données du serveur.");
+    console.log("Cache vide, attente du serveur...");
   }
 
-  // --- ÉTAPE B : ACTIVATION DU TEMPS RÉEL ---
+  // --- TEMPS RÉEL ---
   unsubscribeMessages = onSnapshot(q, (snapshot) => {
     if (!lastVisibleDoc && snapshot.docs.length > 0) {
       lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
     }
 
     const tempMessages = [];
-    snapshot.forEach(docSnap => {
-      if (!docSnap.metadata.fromCache) {
-        console.log("Donnée reçue du SERVEUR (Nouveau message ou Refresh)");
-      }
+    snapshot.forEach((docSnap) => {
       tempMessages.push({ id: docSnap.id, ...docSnap.data() });
     });
 
     mergeMessages(tempMessages);
-    renderMessages(true); 
+    renderMessages(true);
   });
 };
 
-// --- 4. CHARGER L'HISTORIQUE (SCROLL UP - AVEC OPTIMISATION CACHE) ---
+// --- 4. CHARGER L'HISTORIQUE (SCROLL UP) ---
 async function loadMoreMessages() {
   if (!activeConversationId || !lastVisibleDoc || isLoadingHistory) return;
 
   isLoadingHistory = true;
-  console.log("Tentative de chargement de l'historique...");
-
   const q = query(
     collection(db, "conversations", activeConversationId, "messages"),
     orderBy("createdAt", "desc"),
     startAfter(lastVisibleDoc),
-    limit(25)
+    limit(25),
   );
 
   try {
-    let snapshot;
-    try {
-      snapshot = await getDocs(query(q, { source: "cache" }));
-      console.log("Historique récupéré depuis le CACHE");
-    } catch (cacheError) {
-      snapshot = await getDocs(q);
-      console.log("Historique récupéré depuis le SERVEUR");
-    }
-
+    const snapshot = await getDocs(q);
     if (!snapshot.empty) {
       lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
-      
       const oldMessages = [];
-      snapshot.forEach(docSnap => {
+      snapshot.forEach((docSnap) => {
         oldMessages.push({ id: docSnap.id, ...docSnap.data() });
       });
-
       mergeMessages(oldMessages);
-      renderMessages(false); 
-    } else {
-      console.log("Fin de l'historique.");
+      renderMessages(false);
     }
   } catch (error) {
     console.error("Erreur historique:", error);
@@ -161,11 +155,10 @@ async function loadMoreMessages() {
   }
 }
 
-// --- 5. LOGIQUE D'AFFICHAGE ET FUSION ---
-
+// --- 5. LOGIQUE D'AFFICHAGE ---
 function mergeMessages(newBatch) {
-  newBatch.forEach(msg => {
-    const index = allMessages.findIndex(m => m.id === msg.id);
+  newBatch.forEach((msg) => {
+    const index = allMessages.findIndex((m) => m.id === msg.id);
     if (index === -1) {
       allMessages.push(msg);
     } else {
@@ -174,8 +167,8 @@ function mergeMessages(newBatch) {
   });
 
   allMessages.sort((a, b) => {
-    const timeA = a.createdAt?.toMillis() || Date.now();
-    const timeB = b.createdAt?.toMillis() || Date.now();
+    const timeA = a.createdAt?.toMillis() || 0;
+    const timeB = b.createdAt?.toMillis() || 0;
     return timeA - timeB;
   });
 }
@@ -198,11 +191,13 @@ function renderMessages(shouldScrollToBottom) {
   }
 }
 
-document.getElementById("messages-container").addEventListener("scroll", (e) => {
-  if (e.target.scrollTop === 0) {
-    loadMoreMessages();
-  }
-});
+document
+  .getElementById("messages-container")
+  .addEventListener("scroll", (e) => {
+    if (e.target.scrollTop === 0) {
+      loadMoreMessages();
+    }
+  });
 
 // --- 6. ENVOYER UN MESSAGE ---
 const handleSendMessage = async () => {
@@ -214,20 +209,18 @@ const handleSendMessage = async () => {
     input.value = "";
     input.focus();
 
-    const expireDate = new Date();
-    expireDate.setDate(expireDate.getDate() + 1); 
-
     try {
+      // 1. Ajouter le message
       await addDoc(collection(db, "conversations", currentConvId, "messages"), {
         text: text,
         senderId: auth.currentUser.uid,
         createdAt: serverTimestamp(),
-        expireAt: expireDate,
       });
 
+      // 2. Mettre à jour la conversation pour la liste
       await updateDoc(doc(db, "conversations", currentConvId), {
         lastMessage: text,
-        updatedAt: serverTimestamp(),
+        lastUpdate: serverTimestamp(),
       });
     } catch (e) {
       console.error("Erreur envoi:", e);
@@ -235,7 +228,9 @@ const handleSendMessage = async () => {
   }
 };
 
-document.getElementById("send-btn").addEventListener("click", handleSendMessage);
+document
+  .getElementById("send-btn")
+  .addEventListener("click", handleSendMessage);
 document.getElementById("msg-input").addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
