@@ -43,20 +43,18 @@ auth.onAuthStateChanged(async (user) => {
     }
 });
 
-// 3. Charger les utilisateurs compatibles (Filtrage)
+// 3. Charger les utilisateurs compatibles
 async function loadPotentialMatches() {
     if (!currentUserData || !currentUserData.location) {
-        console.error("Données de localisation manquantes pour l'utilisateur actuel.");
+        console.error("Données de localisation manquantes.");
         return;
     }
 
     try {
-        // A. Récupérer mes actions passées (Like/Dislike) pour ne pas revoir les profils
         const myActionsSnapshot = await getDocs(collection(db, "utilisateurs", auth.currentUser.uid, "actions"));
         const seenUserIds = myActionsSnapshot.docs.map(doc => doc.id);
-        seenUserIds.push(auth.currentUser.uid); // Ne pas se voir soi-même
+        seenUserIds.push(auth.currentUser.uid); 
 
-        // B. Chercher les utilisateurs avec le même type de relation
         const usersRef = collection(db, "utilisateurs");
         const q = query(usersRef, where("type_relation", "==", currentUserData.type_relation));
         const querySnapshot = await getDocs(q);
@@ -64,8 +62,6 @@ async function loadPotentialMatches() {
         const results = [];
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
-            
-            // Filtre : Pas déjà vu + possède une localisation
             if (!seenUserIds.includes(docSnap.id) && data.location && data.location.lat) {
                 const dist = calculateDistance(
                     currentUserData.location.lat,
@@ -77,13 +73,12 @@ async function loadPotentialMatches() {
             }
         });
 
-        // C. Trier par distance et stocker
         results.sort((a, b) => a.distance - b.distance);
         potentialMatches = results;
         displayMatch(currentIndex);
 
     } catch (error) {
-        console.error("Erreur lors du chargement des profils :", error);
+        console.error("Erreur chargement profils :", error);
     }
 }
 
@@ -103,9 +98,7 @@ function displayMatch(index) {
     }
 
     const match = potentialMatches[index];
-    
-    // Mise à jour de l'interface
-    document.getElementById("card-bg").style.backgroundImage = `url('${match.photoURL || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=500'}')`;
+    document.getElementById("card-bg").style.backgroundImage = `url('${match.photoURL || 'default-avatar.png'}')`;
     document.getElementById("user-name").innerText = match.prenom;
     document.getElementById("user-age").innerText = match.age + " ans";
     
@@ -116,7 +109,7 @@ function displayMatch(index) {
     `;
 }
 
-// 5. Gestion des actions (Like / Dislike)
+// 5. Gestion des actions (Like / Dislike) avec SweetAlert2
 async function handleAction(type) {
     const targetUser = potentialMatches[currentIndex];
     if (!targetUser) return;
@@ -125,39 +118,41 @@ async function handleAction(type) {
     const targetId = targetUser.id;
 
     try {
-        // A. Enregistrer l'action dans Firestore
         await setDoc(doc(db, "utilisateurs", myId, "actions", targetId), {
             type: type,
             at: serverTimestamp()
         });
 
-        // B. Si c'est un LIKE, vérifier le Match mutuel
         if (type === 'like') {
             const otherActionDoc = await getDoc(doc(db, "utilisateurs", targetId, "actions", myId));
             
             if (otherActionDoc.exists() && otherActionDoc.data().type === 'like') {
                 // MATCH CONFIRMÉ
-                await createMatchConversation(targetId, targetUser.prenom);
+                await createMatchConversation(targetId, targetUser.prenom, targetUser.photoURL);
                 
-                // Alerte visuelle (utilise SweetAlert2 si présent dans ton HTML)
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        title: 'Match !',
-                        text: `Vous avez un match avec ${targetUser.prenom} !`,
-                        icon: 'success',
-                        confirmButtonText: 'Lui écrire',
-                        showCancelButton: true,
-                        cancelButtonText: 'Continuer'
-                    }).then((result) => {
-                        if (result.isConfirmed) window.location.href = "chats.html";
-                    });
-                } else {
-                    alert(`Match avec ${targetUser.prenom} !`);
-                }
+                // Alerte stylisée SweetAlert2
+                Swal.fire({
+                    title: 'C\'est un Match ! 💜',
+                    text: `Toi et ${targetUser.prenom} vous plaisez mutuellement.`,
+                    imageUrl: targetUser.photoURL || 'default-avatar.png',
+                    imageWidth: 100,
+                    imageHeight: 100,
+                    imageAlt: 'Photo du match',
+                    showCancelButton: true,
+                    confirmButtonColor: '#7c4dff',
+                    cancelButtonColor: '#ccc',
+                    confirmButtonText: 'Lui envoyer un message',
+                    cancelButtonText: 'Continuer',
+                    didOpen: () => {
+                        const img = Swal.getImage();
+                        if (img) img.style.borderRadius = '50%';
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) window.location.href = "chats.html";
+                });
             }
         }
 
-        // C. Passer au profil suivant
         currentIndex++;
         displayMatch(currentIndex);
 
@@ -166,13 +161,13 @@ async function handleAction(type) {
     }
 }
 
-// 6. Création de la conversation en cas de Match
+// 6. Création de la conversation (Champs harmonisés : lastUpdate et users)
 async function createMatchConversation(targetId, targetName, targetPhoto) {
     const convRef = collection(db, "conversations");
     await addDoc(convRef, {
         participants: [auth.currentUser.uid, targetId],
         lastMessage: "C'est un match ! Commencez à discuter.",
-        lastUpdate: serverTimestamp(), // Doit correspondre à l'orderBy de chats.js
+        lastUpdate: serverTimestamp(), 
         users: {
             [auth.currentUser.uid]: {
                 prenom: currentUserData.prenom,
