@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HandMeet - Messages</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <header>
+        <div class="logo">Discussions</div>
+      </header>
+
+      <main id="chat-list-container" class="chat-main">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Rechercher une discussion..." />
+        </div>
+
+        <div id="conversations-list"></div>
+      </main>
+
+      <section id="chat-window" class="chat-window hidden">
+        <div class="chat-header">
+          <button onclick="closeChat()" class="back-chat-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <img
+            src=""
+            alt="Avatar"
+            id="active-chat-avatar"
+          />
+          <span id="active-chat-name">Amélie</span>
+        </div>
+
+        <div id="messages-container" class="messages-container"></div>
+
+        <div class="chat-input-area">
+          <input
+            type="text"
+            id="msg-input"
+            placeholder="Écrire un message..."
+          />
+          <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </section>
+
+      <nav class="bottom-nav">
+        <a href="accueil.html" class="nav-item">
+          <i class="fas fa-home"></i>
+          <span>Accueil</span>
+        </a>
+        <a href="finduser.html" class="nav-item">
+          <i class="fas fa-search"></i>
+          <span>Explorer</span>
+        </a>
+        <a href="chats.html" class="nav-item active">
+          <span class="nav-badge">3</span>
+          <i class="fas fa-comment-dots"></i>
+          <span>Messages</span>
+        </a>
+        <a href="account.html" class="nav-item">
+          <i class="fas fa-user"></i>
+          <span>Profil</span>
+        </a>
+      </nav>
+    </div>
+
+    <script type="module" src="chats.js"></script>
+  </body>
+</html>

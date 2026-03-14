@@ -30,7 +30,7 @@ if (loginForm) {
 
         console.log("Connexion réussie !");
         await Swal.fire({
-          title: "Bienvenue Elian " + donnees.prenom + " !",
+          title: "Bienvenue :" + donnees.prenom + " !",
           text: "Connexion réussie à HandMeet",
           icon: "success",
           confirmButtonColor: "#3085d6",
