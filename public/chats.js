@@ -58,10 +58,10 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-// --- 3. OUVRIR UNE CONVERSATION ---
-window.openChat = function (convId, name) {
+// --- 3. OUVRIR UNE CONVERSATION (OPTIMISÉE CACHE-FIRST) ---
+window.openChat = async function (convId, name) {
   activeConversationId = convId;
-  allMessages = [];    // Reset du stockage local
+  allMessages = [];
   lastVisibleDoc = null; 
   
   document.getElementById("active-chat-name").innerText = name;
@@ -71,26 +71,42 @@ window.openChat = function (convId, name) {
 
   if (unsubscribeMessages) unsubscribeMessages();
 
-  // ÉCOUTE DES 25 DERNIERS MESSAGES (TEMPS RÉEL)
-  const q = query(
-    collection(db, "conversations", convId, "messages"),
-    orderBy("createdAt", "desc"),
-    limit(25)
-  );
+  const msgColRef = collection(db, "conversations", convId, "messages");
+  const q = query(msgColRef, orderBy("createdAt", "desc"), limit(25));
 
+  // --- ÉTAPE A : TENTATIVE DE CHARGEMENT INITIAL VIA CACHE (0 LECTURE) ---
+  try {
+    const cacheSnap = await getDocs(query(q, { source: "cache" }));
+    if (!cacheSnap.empty) {
+      console.log("Démarrage du chat via CACHE local (Gratuit)");
+      const cacheMessages = [];
+      cacheSnap.forEach(docSnap => {
+        cacheMessages.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      mergeMessages(cacheMessages);
+      renderMessages(true);
+      lastVisibleDoc = cacheSnap.docs[cacheSnap.docs.length - 1];
+    }
+  } catch (e) {
+    console.log("Le cache est vide, le Snapshot chargera les données du serveur.");
+  }
+
+  // --- ÉTAPE B : ACTIVATION DU TEMPS RÉEL ---
   unsubscribeMessages = onSnapshot(q, (snapshot) => {
-    // On récupère le curseur pour la pagination initiale
     if (!lastVisibleDoc && snapshot.docs.length > 0) {
       lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
     }
 
     const tempMessages = [];
     snapshot.forEach(docSnap => {
+      if (!docSnap.metadata.fromCache) {
+        console.log("Donnée reçue du SERVEUR (Nouveau message ou Refresh)");
+      }
       tempMessages.push({ id: docSnap.id, ...docSnap.data() });
     });
 
     mergeMessages(tempMessages);
-    renderMessages(true); // true = scroll en bas
+    renderMessages(true); 
   });
 };
 
@@ -111,13 +127,11 @@ async function loadMoreMessages() {
   try {
     let snapshot;
     try {
-      // 1. On tente de forcer la lecture depuis le cache (0 lecture facturée)
       snapshot = await getDocs(query(q, { source: "cache" }));
-      console.log("Chargement historique depuis le CACHE");
+      console.log("Historique récupéré depuis le CACHE");
     } catch (cacheError) {
-      // 2. Si le cache n'a pas les données, on va sur le serveur
       snapshot = await getDocs(q);
-      console.log("Chargement historique depuis le SERVEUR");
+      console.log("Historique récupéré depuis le SERVEUR");
     }
 
     if (!snapshot.empty) {
@@ -129,12 +143,12 @@ async function loadMoreMessages() {
       });
 
       mergeMessages(oldMessages);
-      renderMessages(false); // false = préserve la position du scroll
+      renderMessages(false); 
     } else {
-      console.log("Plus aucun message ancien à charger.");
+      console.log("Fin de l'historique.");
     }
   } catch (error) {
-    console.error("Erreur lors du chargement de l'historique :", error);
+    console.error("Erreur historique:", error);
   } finally {
     isLoadingHistory = false;
   }
@@ -144,12 +158,19 @@ async function loadMoreMessages() {
 
 function mergeMessages(newBatch) {
   newBatch.forEach(msg => {
-    if (!allMessages.find(m => m.id === msg.id)) {
+    const index = allMessages.findIndex(m => m.id === msg.id);
+    if (index === -1) {
       allMessages.push(msg);
+    } else {
+      allMessages[index] = msg;
     }
   });
-  // Tri chronologique : plus vieux en haut, plus récents en bas
-  allMessages.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+
+  allMessages.sort((a, b) => {
+    const timeA = a.createdAt?.toMillis() || Date.now();
+    const timeB = b.createdAt?.toMillis() || Date.now();
+    return timeA - timeB;
+  });
 }
 
 function renderMessages(shouldScrollToBottom) {
@@ -166,12 +187,10 @@ function renderMessages(shouldScrollToBottom) {
   if (shouldScrollToBottom) {
     container.scrollTop = container.scrollHeight;
   } else {
-    // Maintient la position pour éviter que l'écran "saute" lors du chargement
     container.scrollTop = container.scrollHeight - previousHeight;
   }
 }
 
-// Détection du scroll vers le haut
 document.getElementById("messages-container").addEventListener("scroll", (e) => {
   if (e.target.scrollTop === 0) {
     loadMoreMessages();
